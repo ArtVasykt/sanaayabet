@@ -2,6 +2,7 @@ import sys
 from flask import Flask, request
 import telepot
 from telepot.loop import OrderedWebhook
+import os
 
 """
 $ python2.7 flask_skeleton.py <token> <listening_port> <webhook_url>
@@ -17,22 +18,6 @@ def on_callback_query(msg):
     query_id, from_id, data = telepot.glance(msg, flavor='callback_query')
     print('Callback query:', query_id, from_id, data)
 
-# need `/setinline`
-def on_inline_query(msg):
-    query_id, from_id, query_string = telepot.glance(msg, flavor='inline_query')
-    print('Inline Query:', query_id, from_id, query_string)
-
-    # Compose your own answers
-    articles = [{'type': 'article',
-                    'id': 'abc', 'title': 'ABC', 'message_text': 'Good morning'}]
-
-    bot.answerInlineQuery(query_id, articles)
-
-# need `/setinlinefeedback`
-def on_chosen_inline_result(msg):
-    result_id, from_id, query_string = telepot.glance(msg, flavor='chosen_inline_result')
-    print('Chosen Inline Result:', result_id, from_id, query_string)
-
 
 TOKEN = '895872757:AAH75clxWg4qja8byHiEs_pqismo_GTnj3Q'
 PORT = int(os.environ.get('PORT', 5000))
@@ -41,11 +26,9 @@ URL = 'https://sanaayabet.herokuapp.com'
 app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
 webhook = OrderedWebhook(bot, {'chat': on_chat_message,
-                               'callback_query': on_callback_query,
-                               'inline_query': on_inline_query,
-                               'chosen_inline_result': on_chosen_inline_result})
+                               'callback_query': on_callback_query})
 
-@app.route('/webhook', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def pass_update():
     webhook.feed(request.data)
     return 'OK'
