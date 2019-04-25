@@ -1,1 +1,1 @@
-web: sanaayabet.py
+web: python sanaayabet.py
